@@ -1,4 +1,5 @@
-import { setCors } from "./utils/cors";
+import { serve } from "bun";
+import { withCors } from "./utils/cors";
 
 console.log("Hello via Bun!");
 
@@ -7,34 +8,30 @@ const contactos = [
   { id: 2, nombre: "Luis", telefono: 2222 },
 ];
 
-Bun.serve({
-  fetch(req) {
-    console.log(req);
-
+serve({
+  async fetch(req) {
     const url = new URL(req.url);
+
+    // Handle CORS preflight requests
+    if (req.method === "OPTIONS") {
+      return withCors(new Response());
+    }
 
     // GET /contactos
     if (req.method === "GET" && url.pathname === "/contactos") {
-      const res = new Response(JSON.stringify(contactos), {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return setCors(res);
+      const res = Response.json(contactos);
+      return withCors(res);
     }
 
-    // GET /contactos
-    if (req.method === "GET" && url.pathname === "/perrito") {
-      const res = new Response(JSON.stringify({ name: "perritu!!" }), {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return setCors(res);
+    // POST /agregar-contacto
+    if (req.method === "POST" && url.pathname === "/agregar-contacto") {
+      let nuevoContacto = await req.json();
+      contactos.push(nuevoContacto);
+      return withCors(new Response("Contacto creado"));
     }
 
-    console.log(url);
-
-    return new Response("Bun!");
+    return withCors(Response.json({ message: "Not found" }, { status: 404 }));
   },
 });
+
+console.log("El servidor está corriendo en el puerto 3000");

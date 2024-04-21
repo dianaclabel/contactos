@@ -16,16 +16,12 @@ formContactoNuevo.addEventListener("submit", manejarNuevoContacto);
 
 cargarContactos();
 
-function cargarContactos() {
-  fetch("http://localhost:3000/contactos")
-    .then((res) => {
-      return res.json();
-    })
-    .then((data) => {
-      console.log(data);
-      contactos = data;
-      refrescarTabla();
-    });
+async function cargarContactos() {
+  const req = new Request("http://localhost:3000/contactos");
+  const res = await fetch(req);
+  const data = await res.json();
+  contactos = data;
+  refrescarTabla();
 }
 
 function refrescarTabla() {
@@ -54,7 +50,7 @@ function limpiar() {
   tBodyElement.innerHTML = "";
 }
 
-function manejarNuevoContacto(event) {
+async function manejarNuevoContacto(event) {
   event.preventDefault();
 
   const data = new FormData(formContactoNuevo);
@@ -62,10 +58,21 @@ function manejarNuevoContacto(event) {
   const telefono = data.get("telefono");
   const id = crypto.randomUUID();
   const nuevoContacto = { id, nombre, telefono };
-  contactos.push(nuevoContacto);
+
+  const req = new Request("http://localhost:3000/agregar-contacto", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(nuevoContacto),
+  });
+
+  await fetch(req);
+
+  cargarContactos();
+
   formContactoNuevo.reset();
   cerrarDialog();
-  refrescarTabla();
 }
 
 function mostrarDialog() {
