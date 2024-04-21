@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contactos</title>
+  </head>
+  <body>
+    <h1>Contactos</h1>
+    <button id="btn-cargar-contactos">Refrescar</button>
+    <button id="btn-limpiar">Limpiar</button>
+    <button id="btn-agregar-contacto">Agregar contacto</button>
+
+    <table id="tb-contactos">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Telefono</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-contactos"></tbody>
+    </table>
+
+    <dialog id="dialog-nuevo-contacto">
+      <h3>Nuevo</h3>
+      <form action="" id="form-nuevo-contacto">
+        <div>
+          <label for="input-nombre">Nombre</label>
+          <input type="text" id="input-nombre" name="nombre" required />
+        </div>
+        <div>
+          <label for="input-telefono">Telefono</label>
+          <input type="tel" id="input-telefono" name="telefono" required />
+        </div>
+
+        <menu>
+          <button id="btn-cancelar" type="reset">Cancelar</button>
+          <button type="submit">Guardar</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
