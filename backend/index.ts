@@ -3,7 +3,7 @@ import { withCors } from "./utils/cors";
 
 console.log("Hello via Bun!");
 
-const contactos = [
+let contactos = [
   { id: "aaaa", nombre: "Pablo", telefono: 1111 },
   { id: "bbbb", nombre: "Luis", telefono: 2222 },
 ];
@@ -31,11 +31,11 @@ serve({
     }
 
     // // DELETE
-    // if (req.method === "DELETE" && url.pathname === "/borrar-contacto") {
-    //   let contacto = await req.json();
-    //   contactos.filter((e) => e.id != contacto.id);
-    //   return withCors(new Response("Contacto creado"));
-    // }
+    if (req.method === "DELETE" && url.pathname === "/borrar-contacto") {
+      const contactoId = url.searchParams.get("contacto-id");
+      contactos = contactos.filter((e) => e.id != contactoId);
+      return withCors(new Response("Contacto eliminado"));
+    }
 
     return withCors(Response.json({ message: "Not found" }, { status: 404 }));
   },

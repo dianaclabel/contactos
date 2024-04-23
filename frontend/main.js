@@ -83,17 +83,13 @@ async function manejarNuevoContacto(event) {
   cerrarDialog();
 }
 
-// async function borrarContacto(contacto) {
-//   const req = new Request("http://localhost:3000/borrar-contacto", {
-//     method: "DELETE",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({ parametro1: "contacto.id" }),
-//   });
-
-//   await fetch(req);
-// }
+async function borrarContacto(contacto) {
+  const url = new URL("http://localhost:3000/borrar-contacto");
+  url.searchParams.set("contacto-id", contacto.id);
+  const req = new Request(url, { method: "DELETE" });
+  await fetch(req);
+  cargarContactos();
+}
 
 function mostrarDialog() {
   dialogNuevoContacto.showModal();
