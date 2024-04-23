@@ -3,44 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/2edd298443.js"
+      crossorigin="anonymous"
+    ></script>
     <title>Contactos</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <h1>Contactos</h1>
-    <button id="btn-cargar-contactos">Refrescar</button>
-    <button id="btn-limpiar">Limpiar</button>
-    <button id="btn-agregar-contacto">Agregar contacto</button>
+    <main class="main">
+      <h1 class="titulo-principal">Registro de contactos</h1>
 
-    <table id="tb-contactos">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Telefono</th>
-        </tr>
-      </thead>
-      <tbody id="tbody-contactos"></tbody>
-    </table>
+      <div class="contenedor-btn">
+        <button id="btn-cargar-contactos" class="btn">Refrescar</button>
+        <button id="btn-agregar-contacto" class="btn">Agregar contacto</button>
+      </div>
 
-    <dialog id="dialog-nuevo-contacto">
-      <h3>Nuevo</h3>
-      <form action="" id="form-nuevo-contacto">
-        <div>
-          <label for="input-nombre">Nombre</label>
-          <input type="text" id="input-nombre" name="nombre" required />
-        </div>
-        <div>
-          <label for="input-telefono">Telefono</label>
-          <input type="tel" id="input-telefono" name="telefono" required />
-        </div>
+      <table id="tb-contactos" class="tabla">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Telefono</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-contactos"></tbody>
+      </table>
 
-        <menu>
-          <button id="btn-cancelar" type="reset">Cancelar</button>
-          <button type="submit">Guardar</button>
-        </menu>
-      </form>
-    </dialog>
+      <dialog id="dialog-nuevo-contacto" class="dialog">
+        <i
+          class="fa-regular fa-circle-xmark"
+          id="icon-close-form"
+          style="color: #f16f6e"
+        ></i>
+
+        <h3 class="titulo-dialog">Nuevo Contacto</h3>
+        <form action="" id="form-nuevo-contacto" class="form-dialog">
+          <div class="form-campo">
+            <label for="input-nombre" class="label">Nombre</label>
+            <input
+              type="text"
+              id="input-nombre"
+              name="nombre"
+              class="input"
+              required
+            />
+          </div>
+          <div class="form-campo">
+            <label for="input-telefono" class="label" s>Telefono</label>
+            <input
+              type="tel"
+              id="input-telefono"
+              name="telefono"
+              class="input"
+              required
+            />
+          </div>
+
+          <menu class="menu">
+            <button
+              id="btn-cancelar"
+              type="reset"
+              class="btn-form btn-cancelar"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn-form btn-guardar">Guardar</button>
+          </menu>
+        </form>
+      </dialog>
+    </main>
 
     <script src="./main.js"></script>
   </body>

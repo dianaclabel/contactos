@@ -8,3 +8,127 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
+
+.main {
+  width: 80vw;
+  margin: 0 auto;
+}
+
+.titulo-principal {
+  margin: 1rem 0;
+}
+
+.contenedor-btn {
+  display: flex;
+  justify-content: end;
+  gap: 15px;
+  margin: 20px 0;
+
+  .btn {
+    padding: 10px;
+    width: 140px;
+    border-radius: 12px;
+    outline: none;
+    background-color: #378ce7;
+    color: aliceblue;
+    border: none;
+  }
+}
+
+.tabla {
+  border: 1px solid black;
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    border-bottom: 1px solid #999;
+    border-spacing: 0;
+    width: 25%;
+    vertical-align: top;
+    text-align: left;
+    padding: 10px;
+  }
+
+  .btnDelete {
+    background-color: #fa7070;
+    padding: 0.5em 1em;
+    color: aliceblue;
+    border: none;
+    border-radius: 0.5em;
+  }
+}
+
+.dialog {
+  width: 30%;
+  margin: calc(100vh - 75vh) auto;
+  border: none;
+  padding: 2rem;
+  border-radius: 10px;
+  position: relative;
+
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+    rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+
+  .fa-circle-xmark {
+    font-size: 35px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .titulo-dialog {
+    text-align: center;
+    margin: 10px 0;
+  }
+
+  .form-dialog {
+    padding: 15px 0;
+  }
+
+  .form-campo {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .label {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .input {
+    outline: none;
+    border-radius: 5px;
+    border: none;
+    background-color: #e4e4e4;
+    padding: 5px;
+  }
+
+  .menu {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .btn-form {
+    width: 120px;
+    padding: 10px;
+    border: none;
+    color: aliceblue;
+    border-radius: 5px;
+  }
+
+  .btn-cancelar {
+    background-color: #fa7070;
+  }
+  .btn-guardar {
+    background-color: #92c008;
+  }
+}
+
+.dialog::backdrop {
+  background-color: #dddddd;
+  opacity: 0.8;
+}

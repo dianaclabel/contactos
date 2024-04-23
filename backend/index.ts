@@ -4,8 +4,8 @@ import { withCors } from "./utils/cors";
 console.log("Hello via Bun!");
 
 const contactos = [
-  { id: 1, nombre: "Pablo", telefono: 1111 },
-  { id: 2, nombre: "Luis", telefono: 2222 },
+  { id: "aaaa", nombre: "Pablo", telefono: 1111 },
+  { id: "bbbb", nombre: "Luis", telefono: 2222 },
 ];
 
 serve({
@@ -29,6 +29,13 @@ serve({
       contactos.push(nuevoContacto);
       return withCors(new Response("Contacto creado"));
     }
+
+    // // DELETE
+    // if (req.method === "DELETE" && url.pathname === "/borrar-contacto") {
+    //   let contacto = await req.json();
+    //   contactos.filter((e) => e.id != contacto.id);
+    //   return withCors(new Response("Contacto creado"));
+    // }
 
     return withCors(Response.json({ message: "Not found" }, { status: 404 }));
   },
