@@ -58,27 +58,30 @@ function refrescarTabla() {
   }
 }
 
+// const data = new FormData(formContactoNuevo);
+// const nombre = data.get("nombre");
+// const telefono = data.get("telefono");
+// const nuevoContacto = { nombre, telefono };
+
+// const req = new Request("http://localhost:3000/agregar-contacto", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+//   body: JSON.stringify(nuevoContacto),
+// });
+
 async function manejarNuevoContacto(event) {
   event.preventDefault();
 
-  const data = new FormData(formContactoNuevo);
-  const nombre = data.get("nombre");
-  const telefono = data.get("telefono");
-  const id = crypto.randomUUID();
-  const nuevoContacto = { id, nombre, telefono };
-
   const req = new Request("http://localhost:3000/agregar-contacto", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(nuevoContacto),
+    body: new FormData(formContactoNuevo),
   });
 
   await fetch(req);
 
   cargarContactos();
-
   formContactoNuevo.reset();
   cerrarDialog();
 }
