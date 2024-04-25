@@ -1,11 +1,3 @@
-export const CORS_HEADERS = {
-  headers: {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "OPTIONS, POST",
-    "Access-Control-Allow-Headers": "Content-Type",
-  },
-};
-
 export function withCors(res: Response) {
   res.headers.set("Access-Control-Allow-Origin", "*");
   res.headers.set(
