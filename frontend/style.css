@@ -36,7 +36,6 @@ body {
 }
 
 .tabla {
-  border: 1px solid black;
   width: 100%;
   border-collapse: collapse;
 
@@ -44,18 +43,37 @@ body {
   td {
     border-bottom: 1px solid #999;
     border-spacing: 0;
-    width: 25%;
-    vertical-align: top;
     text-align: left;
     padding: 10px;
   }
 
-  .btnDelete {
+  th:first-child {
+    width: 0;
+  }
+
+  /* th Nombre y telefono */
+  th:nth-child(2),
+  th:nth-child(3) {
+    width: 40%;
+  }
+
+  /* Ultimo td */
+  td:nth-last-child(1) {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btnDelete,
+  .btnEditar {
     background-color: #fa7070;
     padding: 0.5em 1em;
     color: aliceblue;
     border: none;
     border-radius: 0.5em;
+  }
+
+  .btnEditar {
+    background-color: #787878;
   }
 }
 

@@ -44,15 +44,22 @@ function refrescarTabla() {
       trElement.appendChild(tdElement);
     }
 
-    const tdBtnBorrar = document.createElement("td");
+    const tdAcciones = document.createElement("td");
 
     const btnBorrar = document.createElement("button");
     btnBorrar.innerHTML = "Borrar";
     btnBorrar.classList.add("btnDelete");
     btnBorrar.addEventListener("click", () => borrarContacto(contacto));
 
-    tdBtnBorrar.appendChild(btnBorrar);
-    trElement.appendChild(tdBtnBorrar);
+    const btnEditar = document.createElement("button");
+    btnEditar.innerHTML = "Editar";
+    btnEditar.classList.add("btnEditar");
+    // btnEditar.addEventListener("click", () => borrarContacto(contacto));
+
+    tdAcciones.appendChild(btnBorrar);
+    tdAcciones.appendChild(btnEditar);
+
+    trElement.appendChild(tdAcciones);
 
     tBodyElement.appendChild(trElement);
   }
