@@ -64,13 +64,6 @@ serve({
       const idx = contactos.findIndex((c) => c.id === id);
       contactos[idx] = { id, nombre, telefono };
 
-      // contactos.forEach((e) => {
-      //   if (e.id === id) {
-      //     e.nombre = nombre;
-      //     e.telefono = telefono;
-      //   }
-      // });
-
       return withCors(new Response("Contacto editado"));
     }
 

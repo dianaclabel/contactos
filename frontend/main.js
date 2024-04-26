@@ -1,17 +1,31 @@
 const tBodyElement = document.getElementById("tbody-contactos");
 const btnCargarContactos = document.getElementById("btn-cargar-contactos");
 const btnAgregarContacto = document.getElementById("btn-agregar-contacto");
-const dialogNuevoContacto = document.getElementById("dialog-nuevo-contacto");
+const dialogContacto = document.getElementById("dialog-contacto");
 const btnCancelar = document.getElementById("btn-cancelar");
-const formContactoNuevo = document.getElementById("form-nuevo-contacto");
+const formContacto = document.getElementById("form-contacto");
 const iconCloseForm = document.getElementById("icon-close-form");
+const tituloDialog = document.getElementById("titulo-dialog");
+
+/** @type {HTMLInputElement} */
+const inputNombre = document.getElementById("input-nombre");
+
+const inputTelefono = document.getElementById("input-telefono");
 
 let contactos = [];
 
+/** @type {"crear" | "editar"} */
+let modoFormulario = "crear";
+
+let contactoActualID;
+
 btnCargarContactos.addEventListener("click", cargarContactos);
-btnAgregarContacto.addEventListener("click", mostrarDialog);
+btnAgregarContacto.addEventListener("click", () => {
+  modoFormulario = "crear";
+  mostrarDialog(modoFormulario);
+});
 btnCancelar.addEventListener("click", cerrarDialog);
-formContactoNuevo.addEventListener("submit", manejarNuevoContacto);
+formContacto.addEventListener("submit", manejarContacto);
 iconCloseForm.addEventListener("click", cerrarDialog);
 
 cargarContactos();
@@ -54,7 +68,13 @@ function refrescarTabla() {
     const btnEditar = document.createElement("button");
     btnEditar.innerHTML = "Editar";
     btnEditar.classList.add("btnEditar");
-    // btnEditar.addEventListener("click", () => borrarContacto(contacto));
+    btnEditar.addEventListener("click", () => {
+      contactoActualID = contacto.id;
+      modoFormulario = "editar";
+      inputNombre.value = contacto.nombre;
+      inputTelefono.value = contacto.telefono;
+      mostrarDialog(modoFormulario);
+    });
 
     tdAcciones.appendChild(btnBorrar);
     tdAcciones.appendChild(btnEditar);
@@ -65,31 +85,33 @@ function refrescarTabla() {
   }
 }
 
-// const data = new FormData(formContactoNuevo);
-// const nombre = data.get("nombre");
-// const telefono = data.get("telefono");
-// const nuevoContacto = { nombre, telefono };
-
-// const req = new Request("http://localhost:3000/agregar-contacto", {
-//   method: "POST",
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-//   body: JSON.stringify(nuevoContacto),
-// });
-
-async function manejarNuevoContacto(event) {
+async function manejarContacto(event) {
   event.preventDefault();
 
-  const req = new Request("http://localhost:3000/agregar-contacto", {
-    method: "POST",
-    body: new FormData(formContactoNuevo),
-  });
+  // TODO if modo
 
-  await fetch(req);
+  if (modoFormulario === "crear") {
+    const req = new Request("http://localhost:3000/agregar-contacto", {
+      method: "POST",
+      body: new FormData(formContacto),
+    });
+
+    await fetch(req);
+  }
+
+  if (modoFormulario === "editar") {
+    const url = new URL("http://localhost:3000/editar-contacto");
+    url.searchParams.set("id", contactoActualID);
+    const req = new Request(url, {
+      method: "PUT",
+      body: new FormData(formContacto),
+    });
+
+    await fetch(req);
+  }
 
   cargarContactos();
-  formContactoNuevo.reset();
+  formContacto.reset();
   cerrarDialog();
 }
 
@@ -101,10 +123,19 @@ async function borrarContacto(contacto) {
   cargarContactos();
 }
 
-function mostrarDialog() {
-  dialogNuevoContacto.showModal();
+function mostrarDialog(modo) {
+  if (modo === "crear") {
+    formContacto.reset();
+    tituloDialog.innerHTML = "Nuevo Contacto";
+    dialogContacto.showModal();
+  }
+
+  if (modo === "editar") {
+    tituloDialog.innerHTML = "Editar Contacto";
+    dialogContacto.showModal();
+  }
 }
 
 function cerrarDialog() {
-  dialogNuevoContacto.close();
+  dialogContacto.close();
 }
