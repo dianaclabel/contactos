@@ -1,3 +1,9 @@
+const isProd = location.hostname !== "localhost";
+
+const backendBaseURL = isProd
+  ? "https://contactos-backend.apps.carlosduran.dev"
+  : "http://localhost:3000";
+
 const tBodyElement = document.getElementById("tbody-contactos");
 const btnCargarContactos = document.getElementById("btn-cargar-contactos");
 const btnAgregarContacto = document.getElementById("btn-agregar-contacto");
@@ -31,7 +37,7 @@ iconCloseForm.addEventListener("click", cerrarDialog);
 cargarContactos();
 
 async function cargarContactos() {
-  const req = new Request("http://localhost:3000/contactos");
+  const req = new Request(backendBaseURL + "/contactos");
   const res = await fetch(req);
   const data = await res.json();
   contactos = data;
@@ -91,7 +97,7 @@ async function manejarContacto(event) {
   // TODO if modo
 
   if (modoFormulario === "crear") {
-    const req = new Request("http://localhost:3000/agregar-contacto", {
+    const req = new Request(backendBaseURL + "/agregar-contacto", {
       method: "POST",
       body: new FormData(formContacto),
     });
@@ -100,7 +106,7 @@ async function manejarContacto(event) {
   }
 
   if (modoFormulario === "editar") {
-    const url = new URL("http://localhost:3000/editar-contacto");
+    const url = new URL(backendBaseURL + "/editar-contacto");
     url.searchParams.set("id", contactoActualID);
     const req = new Request(url, {
       method: "PUT",
@@ -116,7 +122,7 @@ async function manejarContacto(event) {
 }
 
 async function borrarContacto(contacto) {
-  const url = new URL("http://localhost:3000/borrar-contacto");
+  const url = new URL(backendBaseURL + "/borrar-contacto");
   url.searchParams.set("contacto-id", contacto.id);
   const req = new Request(url, { method: "DELETE" });
   await fetch(req);
