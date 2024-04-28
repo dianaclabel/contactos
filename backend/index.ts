@@ -1,55 +1,81 @@
 import { serve } from "bun";
 import { withCors } from "./utils/cors";
-
-console.log("Hello via Bun!");
-
-let contactos = [
-  { id: "aaaa", nombre: "Pablo", telefono: "1111" },
-  { id: "bbbb", nombre: "Luis", telefono: "2222" },
-];
+import { connection } from "./db.ts";
+import type { RowDataPacket } from "mysql2";
 
 serve({
   port: 3000,
   async fetch(req) {
     const url = new URL(req.url);
-    console.log(req, url);
 
     // Handle CORS preflight requests
     if (req.method === "OPTIONS") {
       return withCors(new Response());
     }
 
-    // GET /contactos
+    // #region GET /contactos
     if (req.method === "GET" && url.pathname === "/contactos") {
-      const res = Response.json(contactos);
-      return withCors(res);
+      try {
+        const [results] = await connection.query<RowDataPacket[]>(
+          "SELECT * FROM `contactos`"
+        );
+
+        return withCors(Response.json(results));
+      } catch (err) {
+        console.log(err);
+        return withCors(new Response("Error al leer la bd", { status: 500 }));
+      }
     }
 
-    // GET /contacto?id=123
+    // #region GET /contacto?id=123
     if (req.method === "GET" && url.pathname === "/contacto") {
       const contactoId = url.searchParams.get("id");
-      const contacto = contactos.find((c) => c.id === contactoId);
-      return withCors(Response.json(contacto, { status: 404 }));
+      try {
+        const [results] = await connection.query<RowDataPacket[]>(
+          "SELECT * FROM contactos WHERE id = ?",
+          [contactoId]
+        );
+        return withCors(Response.json(results[0]));
+      } catch (err) {
+        console.log(err);
+        return withCors(
+          new Response(`No se pudo encontrar el id ${contactoId} en la bd`, {
+            status: 404,
+          })
+        );
+      }
     }
 
-    // POST /agregar-contacto
+    // #region POST /agregar-contacto
     if (req.method === "POST" && url.pathname === "/agregar-contacto") {
       const data = await req.formData();
       const nombre = data.get("nombre") as string;
       const telefono = data.get("telefono") as string;
       const id = crypto.randomUUID();
-      contactos.push({ nombre, telefono, id });
-      return withCors(new Response("Contacto creado", { status: 201 }));
+
+      if (telefono.length > 15) {
+        return withCors(
+          new Response("El telefono debe tener 15 caracteres como maximo", {
+            status: 400,
+          })
+        );
+      }
+
+      try {
+        await connection.query(
+          "INSERT INTO contactos (id, nombre, telefono) VALUES (?, ?, ?)",
+          [id, nombre, telefono]
+        );
+        return withCors(new Response("Contacto creado", { status: 201 }));
+      } catch (error) {
+        console.error(error);
+        return withCors(
+          new Response("Error en la consulta hacia la bd", { status: 500 })
+        );
+      }
     }
 
-    // DELETE /borrar-contacto?contacto-id=123
-    if (req.method === "DELETE" && url.pathname === "/borrar-contacto") {
-      const contactoId = url.searchParams.get("contacto-id");
-      contactos = contactos.filter((e) => e.id != contactoId);
-      return withCors(new Response("Contacto eliminado", { status: 204 }));
-    }
-
-    // PUT /editar-contacto?id=bbbb  recibe FormData
+    // #region PUT /editar-contacto?id=bbbb  recibe FormData
     if (req.method === "PUT" && url.pathname === "/editar-contacto") {
       const data = await req.formData();
       const nombre = data.get("nombre") as string;
@@ -62,10 +88,51 @@ serve({
         );
       }
 
-      const idx = contactos.findIndex((c) => c.id === id);
-      contactos[idx] = { id, nombre, telefono };
+      if (telefono.length > 15) {
+        return withCors(
+          new Response("El telefono debe tener 15 caracteres como maximo", {
+            status: 400,
+          })
+        );
+      }
 
-      return withCors(new Response("Contacto editado"));
+      try {
+        await connection.query(
+          "UPDATE contactos SET  nombre = ? , telefono = ? WHERE id = ? ",
+          [nombre, telefono, id]
+        );
+        return withCors(new Response("Contacto editado", { status: 200 }));
+      } catch (error) {
+        console.log(error);
+        return withCors(
+          new Response("Error en la edición de bd", { status: 500 })
+        );
+      }
+    }
+
+    // #region DELETE /borrar-contacto?contacto-id=123
+    if (req.method === "DELETE" && url.pathname === "/borrar-contacto") {
+      const contactoId = url.searchParams.get("contacto-id");
+
+      if (!contactoId) {
+        return withCors(
+          new Response("El id en el parámetro es requerido", { status: 400 })
+        );
+      }
+
+      try {
+        await connection.query("DELETE FROM contactos  WHERE id = ? ", [
+          contactoId,
+        ]);
+        return withCors(new Response("Contacto eliminado", { status: 204 }));
+      } catch (error) {
+        console.log(error);
+        return withCors(
+          new Response("Error al intentar eliminar el contacto de la bd", {
+            status: 500,
+          })
+        );
+      }
     }
 
     return withCors(Response.json({ message: "Not found" }, { status: 404 }));

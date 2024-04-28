@@ -1,7 +1,8 @@
-const isProd = location.hostname !== "localhost";
+const isLocal = ["localhost", "127.0.0.1"].some((h) => h === location.hostname);
+const isProd = !isLocal;
 
 const backendBaseURL = isProd
-  ? "https://contactos-backend.apps.carlosduran.dev"
+  ? "https://api.contactos.apps.dianaclabel.com"
   : "http://localhost:3000";
 
 const tBodyElement = document.getElementById("tbody-contactos");
@@ -36,6 +37,7 @@ iconCloseForm.addEventListener("click", cerrarDialog);
 
 cargarContactos();
 
+//GET
 async function cargarContactos() {
   const req = new Request(backendBaseURL + "/contactos");
   const res = await fetch(req);
@@ -102,7 +104,17 @@ async function manejarContacto(event) {
       body: new FormData(formContacto),
     });
 
-    await fetch(req);
+    const res = await fetch(req);
+    if (res.status === 201) {
+      const successMessage = await res.text();
+      alert(successMessage);
+    }
+
+    if (res.status === 400 || res.status === 500) {
+      const errorMessage = await res.text();
+      alert(errorMessage);
+      return;
+    }
   }
 
   if (modoFormulario === "editar") {
