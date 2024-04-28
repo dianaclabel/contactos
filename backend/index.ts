@@ -1,6 +1,6 @@
 import { serve } from "bun";
 import { withCors } from "./utils/cors";
-import { connection } from "./db.ts";
+import { pool } from "./db.ts";
 import type { RowDataPacket } from "mysql2";
 
 serve({
@@ -16,7 +16,7 @@ serve({
     // #region GET /contactos
     if (req.method === "GET" && url.pathname === "/contactos") {
       try {
-        const [results] = await connection.query<RowDataPacket[]>(
+        const [results] = await pool.query<RowDataPacket[]>(
           "SELECT * FROM `contactos`"
         );
 
@@ -31,7 +31,7 @@ serve({
     if (req.method === "GET" && url.pathname === "/contacto") {
       const contactoId = url.searchParams.get("id");
       try {
-        const [results] = await connection.query<RowDataPacket[]>(
+        const [results] = await pool.query<RowDataPacket[]>(
           "SELECT * FROM contactos WHERE id = ?",
           [contactoId]
         );
@@ -62,7 +62,7 @@ serve({
       }
 
       try {
-        await connection.query(
+        await pool.query(
           "INSERT INTO contactos (id, nombre, telefono) VALUES (?, ?, ?)",
           [id, nombre, telefono]
         );
@@ -97,7 +97,7 @@ serve({
       }
 
       try {
-        await connection.query(
+        await pool.query(
           "UPDATE contactos SET  nombre = ? , telefono = ? WHERE id = ? ",
           [nombre, telefono, id]
         );
@@ -121,9 +121,7 @@ serve({
       }
 
       try {
-        await connection.query("DELETE FROM contactos  WHERE id = ? ", [
-          contactoId,
-        ]);
+        await pool.query("DELETE FROM contactos  WHERE id = ? ", [contactoId]);
         return withCors(new Response("Contacto eliminado", { status: 204 }));
       } catch (error) {
         console.log(error);
