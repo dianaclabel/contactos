@@ -1,7 +1,7 @@
 import { serve } from "bun";
 import { withCors } from "./utils/cors";
-import { pool } from "./db.ts";
-import type { RowDataPacket } from "mysql2";
+import type { ResultSetHeader, RowDataPacket } from "mysql2";
+import { dbQuery } from "./db.ts";
 
 serve({
   port: 3000,
@@ -16,11 +16,8 @@ serve({
     // #region GET /contactos
     if (req.method === "GET" && url.pathname === "/contactos") {
       try {
-        const [results] = await pool.query<RowDataPacket[]>(
-          "SELECT * FROM `contactos`"
-        );
-
-        return withCors(Response.json(results));
+        const rows = await dbQuery("SELECT * FROM `contactos`");
+        return withCors(Response.json(rows));
       } catch (err) {
         console.log(err);
         return withCors(new Response("Error al leer la bd", { status: 500 }));
@@ -31,11 +28,12 @@ serve({
     if (req.method === "GET" && url.pathname === "/contacto") {
       const contactoId = url.searchParams.get("id");
       try {
-        const [results] = await pool.query<RowDataPacket[]>(
+        const rows = await dbQuery<RowDataPacket[]>(
           "SELECT * FROM contactos WHERE id = ?",
           [contactoId]
         );
-        return withCors(Response.json(results[0]));
+
+        return withCors(Response.json(rows[0]));
       } catch (err) {
         console.log(err);
         return withCors(
@@ -62,10 +60,11 @@ serve({
       }
 
       try {
-        await pool.query(
+        await dbQuery(
           "INSERT INTO contactos (id, nombre, telefono) VALUES (?, ?, ?)",
           [id, nombre, telefono]
         );
+
         return withCors(new Response("Contacto creado", { status: 201 }));
       } catch (error) {
         console.error(error);
@@ -97,10 +96,17 @@ serve({
       }
 
       try {
-        await pool.query(
+        const result = await dbQuery<ResultSetHeader>(
           "UPDATE contactos SET  nombre = ? , telefono = ? WHERE id = ? ",
           [nombre, telefono, id]
         );
+
+        if (result.affectedRows === 0) {
+          return withCors(
+            new Response("No se encontro el contacto", { status: 404 })
+          );
+        }
+
         return withCors(new Response("Contacto editado", { status: 200 }));
       } catch (error) {
         console.log(error);
@@ -121,7 +127,7 @@ serve({
       }
 
       try {
-        await pool.query("DELETE FROM contactos  WHERE id = ? ", [contactoId]);
+        await dbQuery("DELETE FROM contactos  WHERE id = ?", [contactoId]);
         return withCors(new Response("Contacto eliminado", { status: 204 }));
       } catch (error) {
         console.log(error);
@@ -137,4 +143,4 @@ serve({
   },
 });
 
-console.log("El servidor está corriendo en el puerto 3000");
+console.log("El servidor está corriendo en http://localhost:3000");

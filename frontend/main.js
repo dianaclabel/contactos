@@ -2,7 +2,7 @@ const isLocal = ["localhost", "127.0.0.1"].some((h) => h === location.hostname);
 const isProd = !isLocal;
 
 const backendBaseURL = isProd
-  ? "https://api.contactos.apps.dianaclabel.com"
+  ? "https://contactos-api.duna.dev"
   : "http://localhost:3000";
 
 const tBodyElement = document.getElementById("tbody-contactos");
